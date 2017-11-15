@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="fi.jamk.h8672.tripactivity.TripActivity">
+
+    <RelativeLayout
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content">
+
+        <!-- Top -->
+        <!-- Center -->
+        <!-- Bottom -->
+        <Button
+            android:id="@+id/buttonTimerStart"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Start timer"
+            android:layout_above="@+id/buttonTimerPause"
+            tools:layout_editor_absoluteX="8dp"
+            tools:layout_editor_absoluteY="72dp" />
+
+        <Button
+            android:id="@+id/buttonTimerPause"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/buttonTimerStop"
+            android:text="Pause timer"
+            tools:layout_editor_absoluteX="8dp"
+            tools:layout_editor_absoluteY="120dp" />
+
+        <Button
+            android:id="@+id/buttonTimerStop"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Stop timer"
+            android:layout_alignParentBottom="true"
+            tools:layout_editor_absoluteX="8dp"
+            tools:layout_editor_absoluteY="168dp" />
+
+    </RelativeLayout>
+
+</android.support.constraint.ConstraintLayout>
