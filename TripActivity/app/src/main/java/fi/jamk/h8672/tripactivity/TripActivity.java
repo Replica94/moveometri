@@ -15,7 +15,7 @@ public class TripActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_trip);
 
-        timer = new StopTimer();
+        timer = new TravelTimer();
 
         addClickListeners();
 

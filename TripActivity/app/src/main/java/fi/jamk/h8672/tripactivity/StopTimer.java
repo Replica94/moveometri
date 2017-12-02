@@ -2,23 +2,20 @@ package fi.jamk.h8672.tripactivity;
 
 import android.util.Log;
 
+import java.util.ArrayList;
 import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.Map;
-import java.util.HashMap;
-import java.util.Map.Entry;
 
 /**
  * Created by H8672 on 15.11.2017.
  */
 
-public final class StopTimer extends Timer {
-    private Map<String, Object> times;
+public class StopTimer extends Timer {
+    protected ArrayList<TripEntry> times;
     boolean stopped;
-    long start, end;
+    Date end;
 
     public StopTimer() {
-        this.times = new HashMap<String, Object>();
+        this.times = new ArrayList<TripEntry>();
         this.stopped = false;
     }
 
@@ -29,29 +26,28 @@ public final class StopTimer extends Timer {
             times.clear();
             stopped = false;
             duration = 0;
-            start = System.currentTimeMillis();
         }
-        //Getting time using GregorianCalender did not get current time.
-        //recordDate = (Date) GregorianCalendar.getInstance().getTime().clone();
         recordDate = new Date(System.currentTimeMillis());
         Log.i("StopTimer", "Date using system..." + recordDate.getTime());
-        times.put("D", new Date(System.currentTimeMillis()));
+        times.add(new TripEntry("D", new Date(System.currentTimeMillis())));
     }
 
     @Override
     public void PauseTimer() {
-        times.put("P", new Date(System.currentTimeMillis()));
+        times.add(new TripEntry("P", new Date(System.currentTimeMillis())));
     }
 
     @Override
     public void StopTimer() {
         //If timer is on pause when timer is stopped, modulus from list size will be 0 and there's no need to add another time.
         if(times.size() % 2 == 1) {
-            times.put("D", new Date(System.currentTimeMillis()));
+            times.add(new TripEntry("D", new Date(System.currentTimeMillis())));
         }
         CalculateDuration();
         Log.i("StopTimer", "Timer stopped and duration calculated");
     }
+
+    protected void CheckEntry(TripEntry item) {}
 
     @Override
     protected void CalculateDuration() {
@@ -61,12 +57,15 @@ public final class StopTimer extends Timer {
         boolean paused = false;
 
         //Go through list of times
-        for (Entry<String, Object> item : times.entrySet()) {
+        for (TripEntry item : times) {
             //If item is a pause
-            if(item.getKey() == "P") {
+            if(item.getTag() == "P") {
                 Log.i("StopTimer", "Pause was found");
                 paused = !paused;
-                lastDate = ((Date) item.getValue());
+                if(paused) {
+                    time += (float) (((Date) item.getData()).getTime()/100 - lastDate.getTime()/100);
+                }
+                lastDate = ((Date) item.getData());
                 continue;
             }
 
@@ -75,20 +74,25 @@ public final class StopTimer extends Timer {
                 Log.w("StopTimer", "Timer was on pause and there was a time between pauses");
                 continue;
             }
-
-            //If item is a Date
-            if(item.getKey() == "D") {
-                Log.i("StopTimer", "Date was found");
-                //Ignore lastTime in first run.
-                if (lastDate.before(((Date) item.getValue()))) {
-                    time += (float)(((Date) item.getValue()).getTime() - lastDate.getTime());
+            else {
+                //If item is a Date
+                if (item.getTag() == "D") {
+                    Log.i("StopTimer", "Date was found");
+                    //Ignore lastTime in first run.
+                    if (lastDate.before(((Date) item.getData()))) {
+                        time += (float) (((Date) item.getData()).getTime()/100 - lastDate.getTime()/100);
+                    }
+                    lastDate = ((Date) item.getData());
                 }
-                lastDate = ((Date) item.getValue());
+                else {
+                    CheckEntry(item);
+                }
             }
         }
-        Log.i("StopTimer", "Duration was " + time);
-        end = System.currentTimeMillis();
-        float xtime = (((float)end - start) / 1000);
+        time = time / 10;
+        Log.i("StopTimer", "Duration was " + time + " and there is " + times.size() + " records");
+        end = new Date(System.currentTimeMillis());
+        float xtime = (((float)(end.getTime()/100 - recordDate.getTime()/100))/10);
         Log.i("StopTimer", "XTime value was " + xtime);
         duration = time;
     }
