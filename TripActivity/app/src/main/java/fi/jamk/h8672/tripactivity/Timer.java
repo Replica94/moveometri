@@ -1,5 +1,7 @@
 package fi.jamk.h8672.tripactivity;
 
+import android.app.Activity;
+import android.app.Service;
 import android.util.Log;
 
 import java.text.DateFormat;
@@ -17,6 +19,7 @@ public abstract class Timer {
 
     public float GetDuration(){
         Log.i("Timer", "Returning duration as float");
+        //if(duration == 0) return (((float)(System.currentTimeMillis()/100 - recordDate.getTime()/100))/10);
         return duration;
     }
     public String GetDate(){
