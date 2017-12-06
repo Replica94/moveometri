@@ -1,17 +1,22 @@
 package fi.jamk.h8672.tripactivity;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.location.Location;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.Layout;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 //Unused imports
@@ -22,7 +27,19 @@ import android.os.Debug;
 import android.os.IBinder;
 import android.renderscript.RenderScript;
 
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.GoogleMapOptions;
+import com.google.android.gms.maps.MapFragment;
+import com.google.android.gms.maps.MapView;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.PolylineOptions;
+
 import java.util.ArrayList;
+import java.util.Map;
 
 public class TripActivity extends AppCompatActivity {
     //As static the data is saved even if you go to the desktop or rotate view while it runs.
@@ -37,10 +54,49 @@ public class TripActivity extends AppCompatActivity {
 
         addClickListeners();
 
+        configureMap();
+
         //TODO update textfield with current duration of the timer
         //TODO add map view to the app
         //TODO add current location to the map view
         //TODO when timer is stopped, draw markers and lines to show approximate path that was used
+    }
+
+    GoogleMap mMap;
+
+    private void configureMap() {
+        SupportMapFragment map = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.mapFragment);
+
+
+
+        map.getMapAsync(new OnMapReadyCallback() {
+            @Override
+            public void onMapReady(GoogleMap googleMap) {
+                mMap = googleMap;
+                LatLng pos = new LatLng(62.2307, 25.762);
+                mMap.addMarker(new MarkerOptions().position(pos).title("JKL"));
+                mMap.moveCamera(CameraUpdateFactory.newLatLng(pos));
+            }
+        });
+
+        /*
+        GoogleMapOptions options = new GoogleMapOptions();
+        options.mapType(GoogleMap.MAP_TYPE_SATELLITE)
+                .compassEnabled(true)
+                .rotateGesturesEnabled(false)
+                .tiltGesturesEnabled(false);
+        MapView mapView = new MapView(getApplicationContext(), options);
+        //mapView.getMapAsync(getApplicationContext());
+        mapPos.addView(mapView);
+        //mapView.onCreate();
+        mapView.getMapAsync(new OnMapReadyCallback() {
+            @Override
+            public void onMapReady(GoogleMap googleMap) {
+                Log.i("TripActivity Map", "Ready!");
+                //googleMap.
+            }
+        });
+        */
     }
 
     private void checkPermission(){
@@ -140,9 +196,14 @@ public class TripActivity extends AppCompatActivity {
                 Log.i("TripActivity", "Time duration: " + timer.GetDuration());
                 uiToast("Duration " + timer.GetDuration());
                 ArrayList list = ((TravelTimer) timer).getLocations();
+                PolylineOptions path = new PolylineOptions().color(Color.MAGENTA);
                 for (Object item : list){
-                    uiToast("Locations " + ((Location) item).toString());
+                    //uiToast("Locations " + ((Location) item).toString());
+                    Location loc = (Location) item;
+                    //mMap.addMarker(new MarkerOptions().position(new LatLng(loc.getLatitude(),loc.getLongitude())));
+                    path.add(new LatLng(loc.getLatitude(),loc.getLongitude()));
                 }
+                mMap.addPolyline(path);
             }
         });
     }
