@@ -22,6 +22,8 @@ import android.os.Process;
 import android.support.v4.app.ActivityCompat;
 import android.location.LocationProvider;
 
+import com.google.android.gms.maps.LocationSource;
+
 import java.util.ArrayList;
 
 import static android.location.LocationManager.GPS_PROVIDER;
@@ -32,6 +34,7 @@ import static android.location.LocationManager.GPS_PROVIDER;
  * Created by juha-matti on 2.12.2017.
  * About services...
  * https://developer.android.com/guide/components/services.html
+ * Didn't need it after all ;D
  */
 
 public class TravelTimer extends StopTimer {
@@ -41,10 +44,10 @@ public class TravelTimer extends StopTimer {
     private LocationListener listener;
 
     private class LocationListener implements android.location.LocationListener {
-        //Location LastLocation;
+        private Location LastLocation;
 
-        public LocationListener(String provider) {
-            //LastLocation = new Location(provider);
+        public LocationListener(String provider, Location loc) {
+            LastLocation = loc;
             //Log.i("LocationListener", "LocationListener created for " + LastLocation.getProvider());
             Log.i("LocationListener", "LocationListener created for " + provider);
         }
@@ -55,6 +58,7 @@ public class TravelTimer extends StopTimer {
             //LastLocation.set(location);
             //times.add(new TripEntry("L", new Location(LastLocation)));
             times.add(new TripEntry("L", new Location(location)));
+            LastLocation.set(location);
         }
 
         @Override
@@ -73,21 +77,20 @@ public class TravelTimer extends StopTimer {
         }
     }
 
+    //Listener values to update requirements. ms and meters
+    private static final int TIME_TO_UPDATE = 1000;
+    private static final float MIN_DISTANCE = 5f;
+
     @SuppressLint("MissingPermission")
     //Constructor
-    public TravelTimer(final Context context) {
+    public TravelTimer(final Context context, Location loc) {
         super();
         Log.i("TravelTimer", "Initialized");
 
         //Start custom location listener
         manager = (LocationManager) context.getSystemService(Service.LOCATION_SERVICE);
-        listener = new LocationListener(GPS_PROVIDER);
-        manager.requestLocationUpdates(GPS_PROVIDER, 1000, 0.1f, listener);
-
-        //Get latest location
-        //Location loc = manager.getLastKnownLocation(LocationManager.PASSIVE_PROVIDER);
-        //Log.i("TravelTimer", "Location " + loc.toString());
-        //Toast.makeText(context, loc.toString(), Toast.LENGTH_SHORT).show();
+        listener = new LocationListener(GPS_PROVIDER, loc);
+        manager.requestLocationUpdates(GPS_PROVIDER, TIME_TO_UPDATE, MIN_DISTANCE, listener);
     }
 
     //StopTimer overrides, add new check.
@@ -105,8 +108,10 @@ public class TravelTimer extends StopTimer {
 
         //Return all locations
         ArrayList list = new ArrayList();
+        boolean paused = false;
         for(TripEntry item : times){
-            if(item.getTag() == "L") list.add(item.getData());
+            if(item.getTag() == "P") paused = !paused;
+            if(item.getTag() == "L" && !paused) list.add(item.getData());
         }
         return list;
     }
@@ -214,10 +219,6 @@ public class TravelTimer extends StopTimer {
 
         manager = (LocationManager) getApplicationContext().getSystemService(Context.LOCATION_SERVICE);
     }
-
-    //Listener values to update requirements.
-    private static int TIME_TO_UPDATE = 100;
-    private static float MIN_DISTANCE = 0.1f;
 
     //Service start
     @Override
