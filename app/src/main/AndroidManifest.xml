@@ -2,8 +2,18 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="fi.jamk.student.moveometri">
 
+    <!--Location permissions-->
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+
+    <!--Internet access and Map permissions-->
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+
+    <!--Map show in this OpenGL version-->
+    <uses-feature
+        android:glEsVersion="0x00020000"
+        android:required="true"/>
 
     <application
         android:allowBackup="true"
@@ -12,6 +22,17 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+
+        <!--Using this service version-->
+        <meta-data
+            android:name="com.google.android.service.version"
+            android:value="46"/>
+
+        <!--Google maps API key, the studios SHA1 key is required to be attached to view and get new maps-->
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyCxgXl_WsjVTjPe_GIvJiX9EjPYQ4IaM44"/>
+
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -22,6 +43,13 @@
         <activity
             android:name=".LoginActivity"
             android:label="@string/title_activity_login"></activity>
+
+	<!--Timer activity-->
+        <!--Disables changing view when orientation is about to change when tilting, forces using the current view-->
+        <activity android:name=".TripActivity"
+            android:label="Make trips"
+            android:configChanges="keyboardHidden|orientation|screenSize">
+        </activity>
     </application>
 
 </manifest>

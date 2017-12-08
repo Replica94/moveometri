@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="fi.jamk.student.moveometri.TripActivity">
+
+    <RelativeLayout
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content">
+
+        <!-- Top -->
+        <!-- Center -->
+
+        <LinearLayout
+            android:id="@+id/map"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_above="@id/buttonTimerStart">
+
+            <fragment xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:tools="http://schemas.android.com/tools"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@+id/mapFragment"
+                android:name="com.google.android.gms.maps.SupportMapFragment" />
+
+        </LinearLayout>
+
+        <!-- Bottom -->
+
+        <Button
+            android:id="@+id/buttonTimerStart"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Start timer"
+            android:layout_above="@+id/buttonTimerPause"/>
+
+        <Button
+            android:id="@+id/buttonTimerPause"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/buttonTimerStop"
+            android:text="Pause timer"/>
+
+        <Button
+            android:id="@+id/buttonTimerStop"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Stop timer"
+            android:layout_alignParentBottom="true"/>
+
+    </RelativeLayout>
+
+</android.support.constraint.ConstraintLayout>

@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.w3c.dom.Text;
 
@@ -18,6 +19,7 @@ import java.util.Random;
 public class MainActivity extends AppCompatActivity {
 
     protected static final int ACTION_LOGIN = 1;
+    protected static final int ACTION_TRIP = 2;
 
     protected void refreshViews() {
         Button loginButton = (Button) findViewById(R.id.button);
@@ -32,7 +34,8 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 public void onClick(View view) {
                     Intent i = new Intent(MainActivity.this, LoginActivity.class);
-                    startActivityForResult(i, ACTION_LOGIN);
+                    startActivity(i);
+                    //startActivityForResult(i, ACTION_LOGIN);
                 }
             });
             loginText.setText("Not logged in");
@@ -57,6 +60,10 @@ public class MainActivity extends AppCompatActivity {
     public void onActivityResult(int code, int result, Intent data) {
         if (code == ACTION_LOGIN) {
             refreshViews();
+        }
+        if (code == ACTION_TRIP) {
+            refreshViews();
+            //TODO? ACTION_TRIP
         }
     }
 
@@ -99,6 +106,15 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 tse.synchronize();
+            }
+        });
+
+        findViewById(R.id.buttonStartTripActivity).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent i = new Intent(MainActivity.this, TripActivity.class);
+                //startActivity(i);
+                startActivityForResult(i, ACTION_TRIP);
             }
         });
     }
