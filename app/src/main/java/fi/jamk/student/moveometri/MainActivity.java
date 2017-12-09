@@ -10,6 +10,7 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.json.JSONObject;
 import org.w3c.dom.Text;
 
 import java.util.Date;
@@ -62,8 +63,20 @@ public class MainActivity extends AppCompatActivity {
             refreshViews();
         }
         if (code == ACTION_TRIP) {
+            Log.i("MainActivity", "Result received from TripActivity");
+            Trip trip = new Trip();
+            trip.category = data.getStringExtra("Category");
+            trip.distance = data.getDoubleExtra("Distance", 0);
+            trip.duration = data.getDoubleExtra("Duration", 0);
+            trip.timeStamp = new Date(data.getLongExtra("Date", 0));
+            Log.i("MainActivity", "Intent results\n"
+                    + trip.category + "\n"
+                    + trip.timeStamp.toString() + "\n"
+                    + trip.distance + "\n"
+                    + trip.duration);
+
+            //TODO add trip to list or server...
             refreshViews();
-            //TODO? ACTION_TRIP
         }
     }
 

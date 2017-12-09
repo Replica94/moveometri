@@ -178,15 +178,9 @@ public class TripActivity extends AppCompatActivity {
                             new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude())));
                     path.add(new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()));
                     mMap.addPolyline(path);
-                    LatLng lastpoint = path.getPoints().get(0);
-                    float traveledistance = 0f;
-                    for (LatLng item : path.getPoints()) {
-                        float[] distance = {0f};
-                        Location.distanceBetween(lastpoint.latitude, lastpoint.longitude, item.latitude, item.longitude, distance);
-                        traveledistance += distance[0];
-                        lastpoint = item;
-                    }
-                    startButton.setText("Total time: " + time + "\nDistance: " + traveledistance);
+
+                    double distance = (double) pathLength();
+                    startButton.setText("Total time: " + time + "\nDistance: " + distance);
                 }
                 else {
                     startButton.setText("Total time: " + time);
@@ -288,7 +282,31 @@ public class TripActivity extends AppCompatActivity {
         timerRuns[0] = false;
         timerRuns[1] = false;
 
+        //Send result to the main activity
+        Intent result = new Intent();
+        //TODO categories
+        result.putExtra("Category", "TODO categories");
+        result.putExtra("Date", timer.recordDate.getTime());
+        result.putExtra("Duration", (double) timer.duration);
+
+        double distance = (double) pathLength();
+        result.putExtra("Distance", distance);
+        setResult(MainActivity.ACTION_TRIP, result);
+
         uiToast("currentLocation " + currentLocation.toString());
+    }
+
+    //Calculate the length of the path
+    private float pathLength() {
+        LatLng lastpoint = path.getPoints().get(0);
+        float traveledistance = 0f;
+        for (LatLng item : path.getPoints()) {
+            float[] distance = {0f};
+            Location.distanceBetween(lastpoint.latitude, lastpoint.longitude, item.latitude, item.longitude, distance);
+            traveledistance += (double)distance[0];
+            lastpoint = item;
+        }
+        return traveledistance;
     }
 
 }
