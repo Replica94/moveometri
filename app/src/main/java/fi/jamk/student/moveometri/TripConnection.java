@@ -85,7 +85,8 @@ public class TripConnection {
     private Account loginAccount = null;
     private String loginAccountName = "";
     private String loginAccountPassword = "";
-    private String server = "http://10.0.2.2:5511/";
+    private String server = "https://skeletorium.com/mresti/";
+    //private String server = "http://10.0.2.2:5511/";
 
     private HttpURLConnection prepareConnection(String url) throws IOException {
         HttpURLConnection c = (HttpURLConnection) new URL(url).openConnection();

@@ -74,8 +74,8 @@ public class MainActivity extends AppCompatActivity {
                     + trip.timeStamp.toString() + "\n"
                     + trip.distance + "\n"
                     + trip.duration);
-
-            //TODO add trip to list or server...
+            if (TripConnection.getInstance(this).isLoggedIn())
+                TripStorageEngine.getInstance(this).addTrip(trip);
             refreshViews();
         }
     }
