@@ -145,12 +145,13 @@ public class LoginActivity extends AppCompatActivity {
 
     private boolean isEmailValid(String email) {
         //TODO: Replace this with your own logic
-        return email.length() > 1;
+
+        return email.length() > 2 && email.matches("^[A-Za-z0-9]+$");
     }
 
     private boolean isPasswordValid(String password) {
         //TODO: Replace this with your own logic
-        return password.length() > 4;
+        return password.length() > 2;
     }
 
     /**
@@ -234,12 +235,16 @@ public class LoginActivity extends AppCompatActivity {
             } else {
 
                 if (id == TripConnection.ERROR_UNAUTHORIZED) {
-                    mPasswordView.setError(getString(R.string.error_incorrect_password));
+                    mPasswordView.setError(tripConnection.getErrorCodeMessage(id));
                     mPasswordView.requestFocus();
+                }
+                else if (id == TripConnection.ERROR_USERNAME_TAKEN) {
+                    mEmailView.setError(tripConnection.getErrorCodeMessage(id));
+                    mEmailView.requestFocus();
                 }
                 else
                 {
-                    String msg = TripConnection.getErrorCodeMessage(id);
+                    String msg = tripConnection.getErrorCodeMessage(id);
                     Toast t = Toast.makeText(LoginActivity.this, msg, Toast.LENGTH_LONG);
                     t.show();
                     Log.d("LoginActivity", "TripConnection failed with "+msg);

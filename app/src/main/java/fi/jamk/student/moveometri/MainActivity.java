@@ -34,8 +34,7 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 public void onClick(View view) {
                     Intent i = new Intent(MainActivity.this, LoginActivity.class);
-                    startActivity(i);
-                    //startActivityForResult(i, ACTION_LOGIN);
+                    startActivityForResult(i, ACTION_LOGIN);
                 }
             });
             loginText.setText("Not logged in");

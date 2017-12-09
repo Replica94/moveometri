@@ -123,7 +123,7 @@ class TripStorageEngine implements TripStorageInterface {
                 int ret = connection.addTripSync(t);
                 if (ret <= 0)
                 {
-                    Log.d("TripStorageEngine", "Failed to synchronize trip: "+ TripConnection.getErrorCodeMessage(ret));
+                    Log.d("TripStorageEngine", "Failed to synchronize trip: "+ connection.getErrorCodeMessage(ret));
                     return null;
                 }
                 else
@@ -140,7 +140,7 @@ class TripStorageEngine implements TripStorageInterface {
             ArrayList<Trip> exTrips = new ArrayList<>();
             int retCode = connection.getTripsSync(exTrips);
             if (retCode <= 0) {
-                Log.d("TripStorageEngine", "Failed to synchronize trips: "+TripConnection.getErrorCodeMessage(retCode));
+                Log.d("TripStorageEngine", "Failed to synchronize trips: "+connection.getErrorCodeMessage(retCode));
                 return null;
             }
             else {
