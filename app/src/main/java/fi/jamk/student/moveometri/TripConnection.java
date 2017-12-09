@@ -29,15 +29,16 @@ public class TripConnection {
     public static final int ERROR_CONNECTION_FAILED = -2;
     public static final int ERROR_INTERNAL_SERVER_ERROR = -3;
     public static final int ERROR_BAD_REQUEST = -4;
+    public static final int ERROR_USERNAME_TAKEN = -5;
 
-    //TODO move to strings somehow
-    private final static String[] errorMessages =
+    private final static int[] errorMessageStrings =
     {
-        "Internal error",
-        "Invalid username or password",
-        "Connection failed",
-        "Internal server error",
-        "Bad request"
+            R.string.tripconnection_internal_error,
+            R.string.tripconnection_unauthorized,
+            R.string.tripconnection_connection_failed,
+            R.string.tripconnection_internal_server_error,
+            R.string.tripconnection_bad_request,
+            R.string.tripconnection_username_taken
     };
 
     /**
@@ -46,16 +47,19 @@ public class TripConnection {
      * @param error error code
      * @return Human readable string representing the error
      */
-    public static String getErrorCodeMessage(int error)
+    public String getErrorCodeMessage(int error)
     {
         if (error > 0)
         {
-            return "Success";
+            return mContext.getString(R.string.tripconnection_success);
         }
         int errIndex = -error;
-        if (errIndex < 0 || errIndex >= errorMessages.length)
-            return errorMessages[0];
-        return errorMessages[errIndex];
+        int rdx = 0;
+        if (errIndex < 0 || errIndex >= errorMessageStrings.length)
+            rdx = errorMessageStrings[0];
+        else
+            rdx = errorMessageStrings[errIndex];
+        return mContext.getString(rdx);
     }
 
     private static TripConnection instance;
@@ -86,7 +90,6 @@ public class TripConnection {
     private String loginAccountName = "";
     private String loginAccountPassword = "";
     private String server = "https://skeletorium.com/mresti/";
-    //private String server = "http://10.0.2.2:5511/";
 
     private HttpURLConnection prepareConnection(String url) throws IOException {
         HttpURLConnection c = (HttpURLConnection) new URL(url).openConnection();
@@ -112,7 +115,8 @@ public class TripConnection {
     private void prepareConnectionPost(HttpURLConnection c, JSONObject obj) throws IOException
     {
         String query = obj.toString();
-        Log.d("TripConnection D", query);
+        //For debugging, will print everything in plain text:
+        // Log.d("TripConnection D", query);
         byte[] queryData = query.getBytes();
 
         c.setDoOutput(true);
@@ -282,6 +286,8 @@ public class TripConnection {
             if (c.getResponseCode() != 200) {
                 Log.d("TripConnection FAIL", c.getResponseMessage());
                 c.disconnect();
+                if (c.getResponseCode() == 400)
+                    return ERROR_USERNAME_TAKEN;
                 return ERROR_BAD_REQUEST;
             }
 
