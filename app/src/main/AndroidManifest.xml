@@ -48,6 +48,7 @@
         <!--Disables changing view when orientation is about to change when tilting, forces using the current view-->
         <activity android:name=".TripActivity"
             android:label="Make trips"
+            android:parentActivityName=".MainActivity"
             android:configChanges="keyboardHidden|orientation|screenSize">
         </activity>
     </application>

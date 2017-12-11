@@ -69,7 +69,7 @@ public final class TripActivity extends AppCompatActivity {
             initializeMapValues();
         }
         else {
-            uiToast("Missed permission actually?");
+            //uiToast("Missed permission actually?");
             ActivityCompat.requestPermissions(this, perm, 11111);
         }
     }
@@ -84,7 +84,7 @@ public final class TripActivity extends AppCompatActivity {
             }
         }
         else {
-            uiToast("Have permission to " + permission);
+            //uiToast("Have permission to " + permission);
             return true;
         }
         return false;
@@ -97,7 +97,7 @@ public final class TripActivity extends AppCompatActivity {
                     uiToast(permissions[i] + " permission granted!");
                 }
                 else {
-                    uiToast("No " + permissions[i] + " permission!");
+                    //uiToast("No " + permissions[i] + " permission!");
                 }
             }
         }
@@ -225,11 +225,11 @@ public final class TripActivity extends AppCompatActivity {
     }
     private void timerStarts() {
         Log.i("TripActivity", "Timer started");
-        Intent intent = new Intent(getApplicationContext(), TravelTimer.class);
+        //Intent intent = new Intent(getApplicationContext(), TravelTimer.class);
         timer = new TravelTimer(getApplicationContext(), currentLocation);
         timer.StartTimer();
         newPath();
-        timer.category = getIntent().getStringExtra("TripStartCategory");
+        timer.category = getIntent().getExtras().getString("TripStartCategory");
 
         //Set timer true and pause false
         timerRuns[0] = true;
@@ -238,6 +238,7 @@ public final class TripActivity extends AppCompatActivity {
         timerRunner.startRun();
     }
     private void timerPauses() {
+        if(!timerRuns[0]) return;
         Log.i("TripActivity", "Timer paused");
         timer.PauseTimer();
 
@@ -245,6 +246,7 @@ public final class TripActivity extends AppCompatActivity {
         timerRuns[1] = !timerRuns[1];
     }
     private void timerStops() {
+        if(!timerRuns[0]) return;
         Log.i("TripActivity", "Timer stopped");
         timer.StopTimer();
 
@@ -293,8 +295,9 @@ public final class TripActivity extends AppCompatActivity {
         double distance = (double) pathLength();
         result.putExtra("Distance", distance);
         setResult(MainActivity.ACTION_TRIP, result);
+        finish();
 
-        uiToast("currentLocation " + currentLocation.toString());
+        //uiToast("currentLocation " + currentLocation.toString());
     }
 
     //Calculate the length of the path

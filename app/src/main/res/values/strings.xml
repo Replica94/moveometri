@@ -14,6 +14,10 @@
     <string name="permission_rationale">"Contacts permissions are needed for providing email
         completions."
     </string>
+    <string name="loggedin">Logged in as %1$s</string>
+    <string name="notloggedin">Not logged in</string>
+    <string name="login">Login</string>
+    <string name="logout">Logout</string>
     <string name="tripconnection_internal_error">Internal error</string>
     <string name="tripconnection_unauthorized">Invalid username or password</string>
     <string name="tripconnection_connection_failed">Connection failed</string>
@@ -21,4 +25,8 @@
     <string name="tripconnection_bad_request">Invalid client request error</string>
     <string name="tripconnection_username_taken">Username already taken</string>
     <string name="tripconnection_success">Success</string>
+    <string name="tripview_date">%1$tb %1$td %1$tY %1$tT</string>
+    <string name="tripview_distance_m">%1$.0f m</string>
+    <string name="tripview_distance_km">%1$.1f km</string>
+    <string name="tripview_duration">%1$TT</string>
 </resources>
