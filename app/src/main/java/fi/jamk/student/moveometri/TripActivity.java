@@ -29,7 +29,7 @@ import com.google.android.gms.maps.model.PolylineOptions;
 
 import java.util.ArrayList;
 
-public class TripActivity extends AppCompatActivity {
+public final class TripActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -118,12 +118,12 @@ public class TripActivity extends AppCompatActivity {
     }
 
     //Timer values
-    private Timer timer;
+    private static Timer timer;
     private boolean[] timerRuns;
     private Location currentLocation;
     private GoogleMap mMap;
     private int polylineColor;
-    private PolylineOptions path;
+    private static PolylineOptions path;
     private void setPathColor(final int color) {
         polylineColor = color;
     }
@@ -229,6 +229,7 @@ public class TripActivity extends AppCompatActivity {
         timer = new TravelTimer(getApplicationContext(), currentLocation);
         timer.StartTimer();
         newPath();
+        timer.category = getIntent().getStringExtra("TripStartCategory");
 
         //Set timer true and pause false
         timerRuns[0] = true;
@@ -285,7 +286,7 @@ public class TripActivity extends AppCompatActivity {
         //Send result to the main activity
         Intent result = new Intent();
         //TODO categories
-        result.putExtra("Category", "TODO categories");
+        result.putExtra("Category", timer.category);
         result.putExtra("Date", timer.recordDate.getTime());
         result.putExtra("Duration", (double) timer.duration);
 
@@ -308,6 +309,7 @@ public class TripActivity extends AppCompatActivity {
         }
         return traveledistance;
     }
+
 
 }
 

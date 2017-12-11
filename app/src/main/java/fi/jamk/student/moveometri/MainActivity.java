@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -125,6 +126,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Intent i = new Intent(MainActivity.this, TripActivity.class);
+                i.putExtra("TripStartCategory", ((EditText)findViewById(R.id.category)).getText());
                 //startActivity(i);
                 startActivityForResult(i, ACTION_TRIP);
             }
