@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -22,6 +23,7 @@ public class MainActivity extends AppCompatActivity {
     protected static final int ACTION_LOGIN = 1;
     protected static final int ACTION_TRIP = 2;
 
+    //Update all views in the activity to reflect internal database state
     protected void refreshViews() {
         Button loginButton = (Button) findViewById(R.id.button);
         TextView loginText = (TextView) findViewById(R.id.textView);
@@ -38,28 +40,48 @@ public class MainActivity extends AppCompatActivity {
                     startActivityForResult(i, ACTION_LOGIN);
                 }
             });
-            loginText.setText("Not logged in");
-            loginButton.setText("Login");
+            loginText.setText(R.string.notloggedin);
+            loginButton.setText(getString(R.string.login));
         }
         else
         {
             Date date = new Date(account.lastModification);
-            loginText.setText(account.name+" ("+account.id+") last modified " + date.toString());
-            loginButton.setText("Log out");
+            loginText.setText(getString(R.string.loggedin, account.name));
+            loginButton.setText(R.string.logout);
             loginButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     connection.logOut();
-                    refreshViews();
+                    performSync();
                 }
             });
         }
+
+        TripAdapter tadapter = new TripAdapter(this, TripStorageEngine.getInstance(this).getTrips());
+        ListView lv = (ListView) findViewById(R.id.tripview);
+        if (lv.getAdapter() != null)
+        {
+            tadapter.notifyDataSetInvalidated();
+        }
+        lv.setAdapter(tadapter);
+        tadapter.notifyDataSetChanged();
+    }
+
+    //Updates local database asynchronously and calls refreshViews after that
+    public void performSync()
+    {
+        TripStorageEngine.getInstance(this).synchronize(new TripStorageEngine.SynchronizationCallback() {
+            @Override
+            public void onSynchronized(boolean success) {
+                refreshViews();
+            }
+        });
     }
 
     @Override
     public void onActivityResult(int code, int result, Intent data) {
         if (code == ACTION_LOGIN) {
-            refreshViews();
+            performSync();
         }
         if (code == ACTION_TRIP) {
             Log.i("MainActivity", "Result received from TripActivity");
@@ -75,7 +97,7 @@ public class MainActivity extends AppCompatActivity {
                     + trip.duration);
             if (TripConnection.getInstance(this).isLoggedIn())
                 TripStorageEngine.getInstance(this).addTrip(trip);
-            refreshViews();
+            performSync();
         }
     }
 
@@ -83,41 +105,22 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        refreshViews();
 
+        performSync();
+
+        //Test button for adding new trips
         final TripStorageEngine tse = TripStorageEngine.getInstance(this);
-        final Random random = new Random();
-        final TextView tv = (TextView) findViewById(R.id.textView2);
-
         findViewById(R.id.button2).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                final Random random = new Random();
                 Trip t = new Trip();
                 t.category = "testtest";
                 t.distance = random.nextDouble() * 1500.0;
                 t.duration = random.nextDouble() * 3000.0;
                 t.timeStamp = new Date();
                 tse.addTrip(t);
-            }
-        });
-
-        findViewById(R.id.button3).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                List<Trip> trips = tse.getTrips();
-                String s = "";
-                for (Trip t : trips)
-                {
-                    s += t.id + " ( " + t.extId + " - " + t.synchronizedTo + " ) : " + t.duration + "\n";
-                }
-                tv.setText(s);
-            }
-        });
-
-        findViewById(R.id.button4).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                tse.synchronize();
+                performSync();
             }
         });
 
@@ -129,5 +132,7 @@ public class MainActivity extends AppCompatActivity {
                 startActivityForResult(i, ACTION_TRIP);
             }
         });
+
+
     }
 }

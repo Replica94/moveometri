@@ -26,6 +26,10 @@ class TripStorageEngine implements TripStorageInterface {
         return instance;
     }
 
+    static interface SynchronizationCallback {
+        void onSynchronized(boolean success);
+    }
+
     private TripConnection connection;
     private SharedPreferences settings;
     private final String DB_PREFS_NAME = "DB_STATE";
@@ -42,14 +46,15 @@ class TripStorageEngine implements TripStorageInterface {
         localRevision = settings.getLong("revision", 1);
         if (connection.isLoggedIn())
         {
-            synchronize();
+            synchronize(null);
         }
     }
 
-    public void synchronize() {
+    public void synchronize(SynchronizationCallback cb) {
         if (synchronizeTask == null) {
             synchronizeTask = new SynchronizeTask();
             synchronizeTask.execute((Void) null);
+            synchronizeCallback = cb;
         }
     }
 
@@ -105,16 +110,21 @@ class TripStorageEngine implements TripStorageInterface {
     }
 
     private SynchronizeTask synchronizeTask;
+    private SynchronizationCallback synchronizeCallback = null;
 
-    public class SynchronizeTask extends AsyncTask<Void, Void, Void> {
+    public class SynchronizeTask extends AsyncTask<Void, Void, Boolean> {
         @Override
-        protected Void doInBackground(Void... voids) {
+        protected Boolean doInBackground(Void... voids) {
             TripConnection.Account account = connection.getAccount();
-            if (account == null)
-                return null;
-
-
             SQLiteDatabase writer = db.getWritableDatabase();
+            if (account == null)
+            {
+                writer.delete(db.TABLE_TRIPS, "synchronized != 0", null);
+                return false;
+            }
+
+
+
             List<Trip> allTrips = getTrips();
             for (Trip t : allTrips)
             {
@@ -162,12 +172,15 @@ class TripStorageEngine implements TripStorageInterface {
             }
             localRevision += 1;
             settings.edit().putLong("revision", localRevision).apply();
-            return null;
+            return true;
         }
         @Override
-        protected void onPostExecute(final Void v) {
+        protected void onPostExecute(final Boolean v) {
             Log.d("TripStorageEngine", "Successfully synchronized");
+            if (synchronizeCallback != null)
+                synchronizeCallback.onSynchronized(v != null ? v : false);
             synchronizeTask = null;
+            synchronizeCallback = null;
         }
 
         @Override
