@@ -32,7 +32,10 @@ public class TripAdapter extends ArrayAdapter<Trip> {
         cat.setText(t.category);
 
         date.setText(getContext().getString(R.string.tripview_date, t.timeStamp));
-        duration.setText(getContext().getString(R.string.tripview_duration, new Long((long)(t.duration * 1000))));
+        int hours = ((int)t.duration) / (60 * 60);
+        int minutes = (((int)t.duration) / 60) % 60;
+        int seconds = ((int)t.duration) % 60;
+        duration.setText(getContext().getString(R.string.tripview_duration, new Integer(hours), new Integer(minutes), new Integer(seconds)));
 
         if (t.distance >= 10000)
             distance.setText(getContext().getString(R.string.tripview_distance_km, new Double(t.distance / 1000) ));

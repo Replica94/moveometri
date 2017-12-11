@@ -28,5 +28,5 @@
     <string name="tripview_date">%1$tb %1$td %1$tY %1$tT</string>
     <string name="tripview_distance_m">%1$.0f m</string>
     <string name="tripview_distance_km">%1$.1f km</string>
-    <string name="tripview_duration">%1$TT</string>
+    <string name="tripview_duration">%1$02d:%2$02d:%3$02d</string>
 </resources>
