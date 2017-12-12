@@ -139,7 +139,6 @@ public final class TripActivity extends AppCompatActivity {
 
     //Updates for timer run
     private class TimerRunner {
-        //TODO replace start button to some other view to show current trip progress...
         private Button startButton;
         public void setButton(Button btn) {
             startButton = btn;
@@ -226,6 +225,7 @@ public final class TripActivity extends AppCompatActivity {
     private void timerStarts() {
         Log.i("TripActivity", "Timer started");
         //Intent intent = new Intent(getApplicationContext(), TravelTimer.class);
+        ((Button) findViewById(R.id.buttonTimerStart)).setEnabled(false);
         timer = new TravelTimer(getApplicationContext(), currentLocation);
         timer.StartTimer();
         newPath();
@@ -302,6 +302,7 @@ public final class TripActivity extends AppCompatActivity {
 
     //Calculate the length of the path
     private float pathLength() {
+        if(path.getPoints().size() < 1) return 0f;
         LatLng lastpoint = path.getPoints().get(0);
         float traveledistance = 0f;
         for (LatLng item : path.getPoints()) {
@@ -313,7 +314,13 @@ public final class TripActivity extends AppCompatActivity {
         return traveledistance;
     }
 
-
+    @Override
+    public void onBackPressed() {
+        //setResult(MainActivity.ACTION_TRIP, null);
+        finish();
+        Intent intent = new Intent(TripActivity.this, MainActivity.class);
+        startActivity(intent);
+    }
 }
 
 
