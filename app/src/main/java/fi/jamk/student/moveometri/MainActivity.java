@@ -110,21 +110,6 @@ public class MainActivity extends AppCompatActivity {
 
         performSync();
 
-        //Test button for adding new trips
-        final TripStorageEngine tse = TripStorageEngine.getInstance(this);
-        findViewById(R.id.button2).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                final Random random = new Random();
-                Trip t = new Trip();
-                t.category = "testtest";
-                t.distance = random.nextDouble() * 1500.0;
-                t.duration = random.nextDouble() * 3000.0;
-                t.timeStamp = new Date();
-                tse.addTrip(t);
-                performSync();
-            }
-        });
 
         findViewById(R.id.buttonStartTripActivity).setOnClickListener(new View.OnClickListener() {
             @Override
